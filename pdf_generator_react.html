@@ -86,10 +86,7 @@ function App() {
   
   const closePreview = () => {
     setIsPanelOpen(false);
-    if (previewUrl) {
-      const iframe = document.getElementById('pdfIframe');
-      iframe.src = '';
-    }
+    setPreviewUrl(null);
   };
   
   return (
@@ -101,7 +98,7 @@ function App() {
       
       <div id="previewPanel" style={{ display: isPanelOpen ? 'block' : 'none' }}>
         <button className="closeBtn" onClick={closePreview}>✖</button>
-        <iframe id="pdfIframe" style={{ width: '100%', height: 'calc(100% - 40px)', border: 'none' }}></iframe>
+        <iframe id="pdfIframe" src={previewUrl || ''} style={{ width: '100%', height: 'calc(100% - 40px)', border: 'none' }}></iframe>
       </div>
     </div>
   );

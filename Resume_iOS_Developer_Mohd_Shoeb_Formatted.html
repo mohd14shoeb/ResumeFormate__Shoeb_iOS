@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mohd Shoeb - Resume</title>
+  <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Calibri', 'Carlito', 'Trebuchet MS', sans-serif;
+      font-size: 11pt;
+      color: #1a1a1a;
+      background: #fff;
+      padding: 14px 38px;
+      max-width: 820px;
+      margin: 0 auto;
+      line-height: 1.25;
+    }
+
+    .header { text-align: center; margin-bottom: 4px; }
+
+    /* Name: large, bold, TEAL — matching Haardik's exact style */
+    .header h1 {
+      font-family: 'Calibri', 'Carlito', 'Trebuchet MS', sans-serif;
+      font-size: 32pt;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #2e75b6;
+    }
+
+    /* Subtitle: bold, black */
+    .header .title {
+      font-family: 'Calibri', 'Carlito', 'Trebuchet MS', sans-serif;
+      font-size: 12pt;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-top: 0px;
+    }
+
+    /* Contact: teal */
+    .header .contact {
+      font-family: 'Calibri', 'Carlito', 'Trebuchet MS', sans-serif;
+      font-size: 10pt;
+      color: #2e75b6;
+      margin-top: 2px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .header .contact span { display: flex; align-items: center; gap: 3px; }
+    .header .contact a { color: #2e75b6; text-decoration: none; }
+
+    .section { margin-top: 6px; }
+
+    /* Section titles: teal, uppercase, bold, dark underline */
+    .section-title {
+      font-family: 'Calibri', 'Carlito', 'Trebuchet MS', sans-serif;
+      font-size: 11pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      border-bottom: 1.5px solid #1a1a1a;
+      padding-bottom: 1px;
+      margin-bottom: 3px;
+      color: #2e75b6;
+    }
+
+    /* Summary body text */
+    .summary p { font-size: 11pt; color: #1a1a1a; text-align: justify; }
+
+    .job { margin-bottom: 5px; }
+
+    /* Job title: bold, black */
+    .job-title { font-size: 11pt; font-weight: 700; color: #1a1a1a; }
+
+    /* Company | Date: bold, black */
+    .job-meta { font-size: 11pt; color: #1a1a1a; font-weight: 700; margin-top: 0px; }
+
+    .job ul { margin-top: 1px; padding-left: 18px; }
+
+    .job ul li { font-size: 11pt; color: #1a1a1a; margin-bottom: 0px; text-align: justify; }
+
+    .project { margin-bottom: 4px; }
+
+    .project-title { font-size: 11pt; font-weight: 700; color: #1a1a1a; }
+
+    .project ul { margin-top: 1px; padding-left: 18px; }
+
+    .project ul li { font-size: 11pt; color: #1a1a1a; margin-bottom: 0px; text-align: justify; }
+
+    .project ul li a { color: #2e75b6; text-decoration: none; }
+
+    .skills p { font-size: 11pt; color: #1a1a1a; margin-bottom: 1px; }
+
+    .skills p strong { font-weight: 700; color: #1a1a1a; }
+
+    .edu-item { margin-bottom: 2px; }
+
+    .edu-item .degree { font-size: 11pt; font-weight: 700; color: #1a1a1a; }
+
+    .edu-item .institution { font-size: 11pt; color: #1a1a1a; }
+
+    @media print { body { padding: 10px 30px; } }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Mohd Shoeb</h1>
+    <div class="title">Team Lead, Senior iOS Developer</div>
+    <div class="contact">
+      <span>&#128222; +91 8355820678</span>
+      <span>&#9993; <a href="mailto:mohd14shoeb@gmail.com">mohd14shoeb@gmail.com</a></span>
+      <span>&#128279; <a href="https://linkedin.com/in/mohd14shoeb" target="_blank">linkedin.com/in/mohd14shoeb</a></span>
+      <span>&#128187; <a href="https://github.com/mohd14shoeb" target="_blank">github.com/mohd14shoeb</a></span>
+    </div>
+  </div>
+
+  <!-- PROFESSIONAL SUMMARY -->
+  <div class="section summary">
+    <div class="section-title">Professional Summary</div>
+    <p>
+      Senior iOS Lead with 12+ years of experience delivering enterprise-grade iOS applications across healthcare, telecom, e-commerce, and fintech and digital payments domains. Expert in Swift, SwiftUI, Objective-C, MVVM, and Cocoa Touch with deep expertise in scalable architecture, modular systems, and performance optimization. Proven ability to own end-to-end feature delivery from concept to App Store release, lead cross-functional mobile teams, and drive CI/CD automation across production environments.
+    </p>
+  </div>
+
+  <!-- TECHNICAL SKILLS -->
+  <div class="section skills">
+    <div class="section-title">Technical Skills</div>
+    <p><strong>Languages &amp; Frameworks:</strong> Swift, SwiftUI, Objective-C, UIKit, Swift Concurrency (async/await), JavaScript, Node.js, Express.js </p>
+    <p><strong>Architecture &amp; Design:</strong> MVVM, MVC, Clean Architecture, Coordinator Pattern, Modular Architecture, Dependency Injection, SOLID Principles, Protocol-Oriented Programming</p>
+    <p><strong>Networking &amp; Data:</strong> URLSession, Alamofire, RESTful APIs, Codable, JSON parsing, Core Data, UserDefaults, Keychain, SSL Pinning</p>
+    <p><strong>Performance &amp; Testing:</strong> Instruments, Memory &amp; CPU Profiling, Launch Time Optimization, XCTest, TestFlight</p>
+    <p><strong>DevOps &amp; Tools:</strong> Xcode, Git, CI/CD, Fastlane, Jenkins, Firebase Analytics, Crashlytics, Jira, Confluence, SPM, CocoaPods</p>
+    <p><strong>AI Tools:</strong> GitHub Copilot, Roo Code, Cline</p>
+    <p><strong>Methodologies:</strong> Agile/Scrum, code reviews, cross-functional teamwork, mentoring</p>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <div class="section">
+    <div class="section-title">Experience</div>
+
+    <div class="job">
+      <div class="job-title">Team Lead iOS Developer</div>
+      <div class="job-meta">TELUS Digital | Canada &ndash; Remote &nbsp;|&nbsp; January 2024 &ndash; Present</div>
+      <ul>
+        <li>Building enterprise healthcare iOS applications using Swift, SwiftUI, UIKit, and MVVM architecture.</li>
+        <li>Integrated scalable REST APIs with centralized error handling and structured logging reducing production incidents.</li>
+        <li>Automated CI/CD pipelines using Jenkins and Fastlane reducing release cycle time from days to hours.</li>
+        <li>Migrated legacy dependency management from CocoaPods to Swift Package Manager improving build performance.</li>
+        <li>Collaborated with distributed backend, QA, and product teams across Agile/Scrum delivery cycles.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-title">Technical Specialist &ndash; Team Lead</div>
+      <div class="job-meta">CitiusTech Healthcare Technology Pvt. Ltd. | USA &ndash; Remote &nbsp;|&nbsp; May 2022 &ndash; September 2023</div>
+      <ul>
+        <li>Led architecture and feature delivery across healthcare iOS platforms as individual contributor and team lead.</li>
+        <li>Defined scalable iOS architecture standards, conducted code reviews, and mentored engineers to improve delivery quality.</li>
+        <li>Drove modular system design and performance optimization across client-facing mobile applications.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-title">Senior Software Engineer &ndash; iOS App Developer</div>
+      <div class="job-meta">Reliance Jio Infocomm Pvt. Ltd. | India &nbsp;|&nbsp; March 2018 &ndash; April 2022</div>
+      <ul>
+        <li>Delivered end-to-end features on MyJio telecom application using Swift, UIKit, and MVVM architecture.</li>
+        <li>Implemented secure UPI payment integration (MyJioUPI Pay) with OAuth 2.0 and encrypted payload transmission.</li>
+        <li>Optimized app performance and stability through profiling, memory optimization, and crash analysis using Instruments.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-title">Senior Software Engineer &ndash; iOS App Developer</div>
+      <div class="job-meta">KloudData Pvt. Ltd. | India &nbsp;|&nbsp; September 2014 &ndash; March 2018</div>
+      <ul>
+        <li>Designed and developed scalable, high-performance iOS applications across healthcare and enterprise domains.</li>
+        <li>Mentored junior engineers, led code reviews, and drove architectural improvements improving maintainability.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-title">Software Engineer &ndash; iOS App Developer</div>
+      <div class="job-meta">Survey Analytics Pvt. Ltd. | India &nbsp;|&nbsp; February 2014 &ndash; August 2014</div>
+      <ul>
+        <li>Developed survey collection iOS features using Objective-C, implementing RESTful API integrations and JSON parsing.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-title">Software Engineer &ndash; iOS App Developer</div>
+      <div class="job-meta">PixelSutra Design &amp; Services Pvt. Ltd. | India &nbsp;|&nbsp; September 2012 &ndash; September 2013</div>
+      <ul>
+        <li>Started iOS career as individual contributor; self-learned Objective-C and delivered production applications.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- KEY PROJECTS -->
+  <div class="section">
+    <div class="section-title">Key Projects</div>
+
+    <div class="project">
+      <div class="project-title">TELUS PharmaConnect &ndash; Pharmacy App &nbsp;<span style="font-weight:400;font-size:9pt;">| <a href="https://apps.apple.com/ca/app/telus-pharmaconnect/id1452121212" target="_blank">App Store</a></span></div>
+      <ul>
+        <li>Architected modular MVVM components enabling users to manage medication profiles, request prescription refills, and receive pickup notifications across iPhone and iPad.</li>
+        <li>Integrated secure REST APIs with certificate pinning, OAuth 2.0, and Firebase Analytics/Crashlytics for data-driven UX optimization.</li>
+        <li>Leveraged AI tools (GitHub Copilot, Roo Code) to achieve 90%+ unit test coverage and improve app performance.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="project-title">TELUS Health Virtual Pharmacy &nbsp;<span style="font-weight:400;font-size:9pt;">| <a href="https://apps.apple.com/ca/app/telus-health-virtual-pharmacy/id1587019102" target="_blank">App Store</a></span></div>
+      <ul>
+        <li>Built Canada-wide virtual pharmacy platform with predictive prescription refill engine, pharmacist consultation booking, and video call integration.</li>
+        <li>Designed modular Swift Package architecture ensuring code reusability and maintainability across 50K+ lines of codebase.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="project-title">IntelyCare &ndash; Nursing Jobs &nbsp;<span style="font-weight:400;font-size:9pt;">| <a href="https://apps.apple.com/in/app/intelycare-nursing-jobs/id978207612" target="_blank">App Store</a></span></div>
+      <ul>
+        <li>Implemented on-demand mobile nursing job matching platform enabling healthcare professionals to find shifts and manage schedules.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="project-title">MyJio &ndash; Telecom App &nbsp;<span style="font-weight:400;font-size:9pt;">| <a href="https://itunes.apple.com/in/app/myjio/id1074964262?mt=8" target="_blank">App Store</a></span></div>
+      <ul>
+        <li>Core developer on MyJio telecom app; implemented Talk Time/data transfer, card management, peer-to-peer money transfer, and transaction history features.</li>
+        <li>Optimized app performance and stability through profiling and memory management across multiple production releases.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="project-title">MyJioUPI Pay &nbsp;<span style="font-weight:400;font-size:9pt;">| <a href="https://apps.apple.com/in/app/jiofinance/id6469583963" target="_blank">App Store</a></span></div>
+
+      <ul>
+        <li>Engineered secure UPI payment gateway with OAuth 2.0, auto-deposit, transaction history with filtering/search, and high app stability through rigorous testing and performance optimisation.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- EDUCATION -->
+  <div class="section">
+    <div class="section-title">Education</div>
+    <div class="edu-item">
+      <div class="degree">Master of Science &ndash; Computer Application</div>
+      <div class="institution">Symbiosis International University, Pune &nbsp;|&nbsp; July 2012</div>
+    </div>
+    <div class="edu-item">
+      <div class="degree">Bachelor of Computer Application</div>
+      <div class="institution">Pune University &nbsp;|&nbsp; May 2010</div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -83,9 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
       htmlContent = `<html><body style="font-size:12pt;">${resumeHTML}${coverHTML}</body></html>`;
     }
 
-    // If fetching failed, fall back to a simple placeholder so the preview still works
+    // Fallback placeholder if fetch failed
     if (!htmlContent) {
-      htmlContent = `<h1>Placeholder Content</h1><p>Unable to load the requested HTML file.</p>`;
+      htmlContent = `<h1>Placeholder</h1><p>Unable to load the requested HTML file.</p>`;
     }
 
     // Create a hidden container for html2pdf to render
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
       margin: 1,
       filename: fileName,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: { scale: 2, useCORS: true }, // enable CORS for external resources
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
 

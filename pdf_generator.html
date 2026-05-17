@@ -53,17 +53,18 @@ async function generatePDF(elementId, fileName) {
       : ['Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', 'Cover_Letter_iOS_Mohd_Shoeb.html']);
   
   // Fetch all required HTML files
+  // Fetch all required HTML files
   const fetches = urls.map(url => fetch(url));
   const responses = await Promise.all(fetches);
   
-  // Check for fetch errors
-  if (fetches.some(r => !r.ok)) {
+  // Check for fetch errors using the actual response objects
+  if (responses.some(r => !r.ok)) {
     console.error('Failed to fetch one or more HTML files');
     return;
   }
   
-  // Extract text from all responses
-  const texts = await Promise.all(urls.map(r => r.text()));
+  // Extract text from all successful responses
+  const texts = await Promise.all(responses.map(r => r.text()));
   
   // Combine HTML content if needed (for combined button)
   const combinedHTML = elementId === 'btnBoth'

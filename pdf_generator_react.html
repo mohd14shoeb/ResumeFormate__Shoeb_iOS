@@ -3,33 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <title>PDF Generator</title>
-<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<!-- Production (minified) builds of React – work on GitHub Pages -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 body { font-family: Arial, sans-serif; margin: 20px; }
-button { margin: 10px; padding: 10px 15px; cursor: pointer; }
+#root { padding: 20px; }
+button { margin: 10px; padding: 12px 20px; cursor: pointer; }
 #previewPanel {
   position: fixed;
   top: 0;
   right: 0;
-  width: 30%;
+  width: 35%;
   height: 100%;
   background: #fff;
-  border: 1px solid #ccc;
+  border-left: 1px solid #ccc;
   overflow: auto;
   display: none;
   z-index: 1000;
-  padding: 10px;
+  padding: 15px;
 }
 #previewPanel .closeBtn {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #f44336;
-  color: white;
+  top: 12px;
+  left: 12px;
+  background: #d33;
+  color: #fff;
   border: none;
-  padding: 5px 10px;
+  padding: 6px 10px;
   cursor: pointer;
 }
 </style>
@@ -40,71 +42,77 @@ button { margin: 10px; padding: 10px 15px; cursor: pointer; }
 function App() {
   const [previewUrl, setPreviewUrl] = React.useState(null);
   const [isPanelOpen, setIsPanelOpen] = React.useState(false);
-  
-  const generatePDF = async (elementId, fileName) => {
-    const urls = elementId === 'btnResume' 
+
+  const generatePDF = async (type, fileName) => {
+    const urls = type === 'resume'
       ? ['Resume_iOS_Developer_Mohd_Shoeb_Formatted.html']
-      : (elementId === 'btnCover' 
+      : type === 'cover'
         ? ['Cover_Letter_iOS_Mohd_Shoeb.html']
-        : ['Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', 'Cover_Letter_iOS_Mohd_Shoeb.html']);
-    
-  // Fetch all required HTML files
-  const fetches = urls.map(u => fetch(u));
-  const responses = await Promise.all(fetches);
-  // Verify that each response is ok
-  if (responses.some(r => !r.ok)) {
-    console.error('Fetch failed');
-    return;
-  }
-  // Extract text from the successful responses
-  const texts = await Promise.all(responses.map(r => r.text()));
-    const combinedHTML = elementId === 'btnBoth' 
-      ? `<html><body style="font-size:12pt;">${texts[0]}${texts[1]}</body></html>` 
+        : ['Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', 'Cover_Letter_iOS_Mohd_Shoeb.html'];
+
+    // fetch required HTML files
+    const fetches = urls.map(u => fetch(u));
+    const responses = await Promise.all(fetches);
+    if (responses.some(r => !r.ok)) {
+      console.error('Fetch failed');
+      return;
+    }
+    const texts = await Promise.all(responses.map(r => r.text()));
+    const combinedHTML = type === 'both'
+      ? `<html><body style="font-size:12pt;">${texts[0]}${texts[1]}</body></html>`
       : texts[0];
-        const tempContainer = document.createElement('div');
-    tempContainer.style.position = 'fixed';
-    tempContainer.style.top = '-1000px';
-    tempContainer.style.left = '-1000px';
-    tempContainer.innerHTML = combinedHTML;
-    document.body.appendChild(tempContainer);
-    
+
+    // hidden container for html2pdf
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'fixed';
+    tempDiv.style.top = '-1000px';
+    tempDiv.style.left = '-1000px';
+    tempDiv.innerHTML = combinedHTML;
+    document.body.appendChild(tempDiv);
+
     const opt = {
       margin: 1,
       filename: fileName,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
-    
-    const pdfBlob = await html2pdf().from(tempContainer).set(opt).outputPdf('blob');
-    document.body.removeChild(tempContainer);
-    
+
+    const pdfBlob = await html2pdf().from(tempDiv).set(opt).outputPdf('blob');
+    document.body.removeChild(tempDiv);
+
     const url = URL.createObjectURL(pdfBlob);
     setPreviewUrl(url);
     setIsPanelOpen(true);
   };
-  
+
   const closePreview = () => {
     setIsPanelOpen(false);
     setPreviewUrl(null);
   };
-  
-  return (
-    <div>
-      <h2>Generate PDFs</h2>
-      <button onClick={() => generatePDF('btnResume', 'Resume.pdf')}>Generate Resume PDF (A4)</button>
-      <button onClick={() => generatePDF('btnCover', 'Cover_Letter.pdf')}>Generate Cover Letter PDF (A4)</button>
-      <button onClick={() => generatePDF('btnBoth', 'Resume_and_Cover_Letter.pdf')}>Generate Combined PDF (A4)</button>
-      
-      <div id="previewPanel" style={{ display: isPanelOpen ? 'block' : 'none' }}>
-        <button className="closeBtn" onClick={closePreview}>✖</button>
-        <iframe id="pdfIframe" src={previewUrl || ''} style={{ width: '100%', height: 'calc(100% - 40px)', border: 'none' }}></iframe>
-      </div>
-    </div>
+
+  return React.createElement(
+    'div',
+    null,
+    React.createElement('h2', null, 'Generate PDFs'),
+    React.createElement('button', { onClick: () => generatePDF('resume', 'Resume.pdf') }, 'Generate Resume PDF (A4)'),
+    React.createElement('button', { onClick: () => generatePDF('cover', 'Cover_Letter.pdf') }, 'Generate Cover Letter PDF (A4)'),
+    React.createElement('button', { onClick: () => generatePDF('both', 'Resume_and_Cover_Letter.pdf') }, 'Generate Combined PDF (A4)'),
+    React.createElement(
+      'div',
+      { id: 'previewPanel', style: { display: isPanelOpen ? 'block' : 'none' } },
+      React.createElement('button', { className: 'closeBtn', onClick: closePreview }, '✖'),
+      React.createElement('iframe', {
+        id: 'pdfIframe',
+        src: previewUrl || '',
+        style: { width: '100%', height: 'calc(100% - 40px)', border: 'none' }
+      })
+    )
   );
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// Render the app
+ReactDOM.render(React.createElement(App), document.getElementById('root'));
 </script>
 </body>
 </html>

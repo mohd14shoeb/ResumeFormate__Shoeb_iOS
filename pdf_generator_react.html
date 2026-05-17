@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PDF Generator</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+button { margin: 10px; padding: 10px 15px; cursor: pointer; }
+#previewPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 30%;
+  height: 100%;
+  background: #fff;
+  border: 1px solid #ccc;
+  overflow: auto;
+  display: none;
+  z-index: 1000;
+  padding: 10px;
+}
+#previewPanel .closeBtn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+function App() {
+  const [previewUrl, setPreviewUrl] = React.useState(null);
+  const [isPanelOpen, setIsPanelOpen] = React.useState(false);
+  
+  const generatePDF = async (elementId, fileName) => {
+    const urls = elementId === 'btnResume' 
+      ? ['Resume_iOS_Developer_Mohd_Shoeb_Formatted.html']
+      : (elementId === 'btnCover' 
+        ? ['Cover_Letter_iOS_Mohd_Shoeb.html']
+        : ['Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', 'Cover_Letter_iOS_Mohd_Shoeb.html']);
+    
+    const fetches = urls.map(u => fetch(u));
+    const responses = await Promise.all(fetches);
+    if (fetches.some(r => !r.ok)) {
+      console.error('Fetch failed');
+      return;
+    }
+    const texts = await Promise.all(urls.map(r => r.text()));
+    const combinedHTML = elementId === 'btnBoth' 
+      ? `<html><body style="font-size:12pt;">${texts[0]}${texts[1]}</body></html>` 
+      : texts[0];
+        const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'fixed';
+    tempContainer.style.top = '-1000px';
+    tempContainer.style.left = '-1000px';
+    tempContainer.innerHTML = combinedHTML;
+    document.body.appendChild(tempContainer);
+    
+    const opt = {
+      margin: 1,
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    
+    const pdfBlob = await html2pdf().from(tempContainer).set(opt).outputPdf('blob');
+    document.body.removeChild(tempContainer);
+    
+    const url = URL.createObjectURL(pdfBlob);
+    setPreviewUrl(url);
+    setIsPanelOpen(true);
+  };
+  
+  const closePreview = () => {
+    setIsPanelOpen(false);
+    if (previewUrl) {
+      const iframe = document.getElementById('pdfIframe');
+      iframe.src = '';
+    }
+  };
+  
+  return (
+    <div>
+      <h2>Generate PDFs</h2>
+      <button onClick={() => generatePDF('btnResume', 'Resume.pdf')}>Generate Resume PDF (A4)</button>
+      <button onClick={() => generatePDF('btnCover', 'Cover_Letter.pdf')}>Generate Cover Letter PDF (A4)</button>
+      <button onClick={() => generatePDF('btnBoth', 'Resume_and_Cover_Letter.pdf')}>Generate Combined PDF (A4)</button>
+      
+      <div id="previewPanel" style={{ display: isPanelOpen ? 'block' : 'none' }}>
+        <button className="closeBtn" onClick={closePreview}>✖</button>
+        <iframe id="pdfIframe" style={{ width: '100%', height: 'calc(100% - 40px)', border: 'none' }}></iframe>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+</script>
+</body>
+</html>

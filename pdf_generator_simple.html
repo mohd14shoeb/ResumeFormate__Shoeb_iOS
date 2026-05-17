@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PDF Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+button { margin: 10px; padding: 10px 15px; cursor: pointer; }
+#previewPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 30%;
+  height: 100%;
+  background: #fff;
+  border: 1px solid #ccc;
+  overflow: auto;
+  display: none;
+  z-index: 1000;
+  padding: 10px;
+}
+#previewPanel .closeBtn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<h2>Generate PDFs</h2>
+<button id="btnResume">Generate Resume PDF (A4)</button>
+<button id="btnCover">Generate Cover Letter PDF (A4)</button>
+<button id="btnBoth">Generate Combined PDF (A4)</button>
+
+<div id="previewPanel">
+  <button class="closeBtn">✖</button>
+  <iframe id="pdfIframe" style="width:100%; height:calc(100% - 40px); border:none;"></iframe>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const resumePath = './Resume_iOS_Developer_Mohd_Shoeb_Formatted.html';
+  const coverPath  = './Cover_Letter_iOS_Mohd_Shoeb.html';
+
+  // Helper to fetch a file; returns the raw HTML string or null on error
+  const fetchHTML = async (url) => {
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        console.error(`Failed to fetch ${url}: ${resp.status}`);
+        return null;
+      }
+      return await resp.text();
+    } catch (e) {
+      console.error(`Error fetching ${url}:`, e);
+      return null;
+    }
+  };
+
+  // Core PDF generation logic
+  const generatePDF = async (type, fileName) => {
+    let htmlContent = '';
+
+    if (type === 'resume') {
+      htmlContent = await fetchHTML(resumePath);
+    } else if (type === 'cover') {
+      htmlContent = await fetchHTML(coverPath);
+    } else if (type === 'both') {
+      const [resumeHTML, coverHTML] = await Promise.all([
+        fetchHTML(resumePath),
+        fetchHTML(coverPath)
+      ]);
+      if (!resumeHTML || !coverHTML) {
+        console.error('One of the files could not be loaded.');
+        return;
+      }
+      htmlContent = `<html><body style="font-size:12pt;">${resumeHTML}${coverHTML}</body></html>`;
+    }
+
+    // If fetching failed, fall back to a simple placeholder so the preview still works
+    if (!htmlContent) {
+      htmlContent = `<h1>Placeholder Content</h1><p>Unable to load the requested HTML file.</p>`;
+    }
+
+    // Create a hidden container for html2pdf to render
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'fixed';
+    tempDiv.style.top = '-1000px';
+    tempDiv.style.left = '-1000px';
+    tempDiv.innerHTML = htmlContent;
+    document.body.appendChild(tempDiv);
+
+    const opt = {
+      margin: 1,
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    const pdfBlob = await html2pdf().from(tempDiv).set(opt).outputPdf('blob');
+    document.body.removeChild(tempDiv);
+
+    const previewUrl = URL.createObjectURL(pdfBlob);
+    const panel = document.getElementById('previewPanel');
+    const iframe = document.getElementById('pdfIframe');
+    iframe.src = previewUrl;
+    panel.style.display = 'block';
+  };
+
+  // Button event listeners
+  document.getElementById('btnResume')
+    .addEventListener('click', () => generatePDF('resume', 'Resume.pdf'));
+
+  document.getElementById('btnCover')
+    .addEventListener('click', () => generatePDF('cover', 'Cover_Letter.pdf'));
+
+  document.getElementById('btnBoth')
+    .addEventListener('click', () => generatePDF('both', 'Resume_and_Cover_Letter.pdf'));
+
+  // Close preview
+  document.querySelector('.closeBtn')
+    .addEventListener('click', () => {
+      const panel = document.getElementById('previewPanel');
+      const iframe = document.getElementById('pdfIframe');
+      panel.style.display = 'none';
+      iframe.src = '';
+    });
+});
+</script>
+</body>
+</html>

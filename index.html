@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mohd Shoeb - Resume & Cover Letter</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+      min-height: 100vh;
+      color: #e2e8f0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .header h1 {
+      font-size: 42px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .header .subtitle {
+      font-size: 18px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .header .contact-info {
+      font-size: 14px;
+      color: #64748b;
+      margin-top: 12px;
+    }
+
+    .header .contact-info a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+      transition: border-color 0.3s;
+    }
+
+    .card:hover {
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    .card h2 {
+      font-size: 22px;
+      color: #f1f5f9;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card h2 .icon {
+      font-size: 28px;
+    }
+
+    .card p {
+      color: #94a3b8;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-preview {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-preview:hover {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: rgba(56, 189, 248, 0.5);
+    }
+
+    .btn-download {
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-download:hover {
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-generate {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-generate:hover {
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .status {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #64748b;
+      min-height: 20px;
+    }
+
+    .status.success { color: #34d399; }
+    .status.error { color: #f87171; }
+    .status.loading { color: #fbbf24; }
+
+    /* Preview Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #1e293b;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+    }
+
+    .modal-header h3 {
+      color: #f1f5f9;
+      font-size: 18px;
+    }
+
+    .modal-close {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    .modal-body {
+      flex: 1;
+      overflow: auto;
+      padding: 0;
+    }
+
+    .modal-body iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      min-height: 500px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #475569;
+      font-size: 13px;
+    }
+
+    .footer a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .header h1 { font-size: 28px; }
+      .card { padding: 20px; }
+      .btn { padding: 10px 16px; font-size: 13px; }
+      .btn-group { flex-direction: column; }
+      .btn-group .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>Mohd Shoeb</h1>
+    <div class="subtitle">Team Lead, Senior iOS Developer</div>
+    <div class="contact-info">
+      📞 +91 8355820678 &nbsp;|&nbsp; ✉️ <a href="mailto:mohd14shoeb@gmail.com">mohd14shoeb@gmail.com</a> &nbsp;|&nbsp; 🔗 <a href="https://linkedin.com/in/mohd14shoeb" target="_blank">linkedin.com/in/mohd14shoeb</a> &nbsp;|&nbsp; 💻 <a href="https://github.com/mohd14shoeb" target="_blank">github.com/mohd14shoeb</a>
+    </div>
+  </div>
+
+  <!-- Resume Card -->
+  <div class="card">
+    <h2><span class="icon">📄</span> Resume - iOS Developer</h2>
+    <p>Professional resume highlighting 12+ years of iOS development experience with Swift, SwiftUI, MVVM, and enterprise application delivery.</p>
+    <div class="btn-group">
+      <button class="btn btn-preview" onclick="previewPDF('resume')">
+        👁️ Preview PDF
+      </button>
+      <button class="btn btn-download" onclick="downloadPDF('resume')">
+        ⬇️ Download PDF
+      </button>
+      <button class="btn btn-generate" onclick="generateAndPreview('resume')">
+        ⚡ Generate & Preview
+      </button>
+    </div>
+    <div class="status" id="status-resume"></div>
+  </div>
+
+  <!-- Cover Letter Card -->
+  <div class="card">
+    <h2><span class="icon">✉️</span> Cover Letter</h2>
+    <p>Professional cover letter for Senior iOS Developer / Team Lead position applications.</p>
+    <div class="btn-group">
+      <button class="btn btn-preview" onclick="previewPDF('cover')">
+        👁️ Preview PDF
+      </button>
+      <button class="btn btn-download" onclick="downloadPDF('cover')">
+        ⬇️ Download PDF
+      </button>
+      <button class="btn btn-generate" onclick="generateAndPreview('cover')">
+        ⚡ Generate & Preview
+      </button>
+    </div>
+    <div class="status" id="status-cover"></div>
+  </div>
+
+  <!-- Combined Card -->
+  <div class="card">
+    <h2><span class="icon">📑</span> Combined - Resume + Cover Letter</h2>
+    <p>Generate a combined PDF with both resume and cover letter for unified submission.</p>
+    <div class="btn-group">
+      <button class="btn btn-preview" onclick="previewPDF('both')">
+        👁️ Preview Combined PDF
+      </button>
+      <button class="btn btn-download" onclick="downloadPDF('both')">
+        ⬇️ Download Combined PDF
+      </button>
+      <button class="btn btn-generate" onclick="generateAndPreview('both')">
+        ⚡ Generate & Preview
+      </button>
+    </div>
+    <div class="status" id="status-both"></div>
+  </div>
+
+  <!-- HTML Source Preview -->
+  <div class="card">
+    <h2><span class="icon">🌐</span> View Source Documents</h2>
+    <p>View the original HTML source files directly in your browser.</p>
+    <div class="btn-group">
+      <a href="Resume_iOS_Developer_Mohd_Shoeb_Formatted.html" class="btn btn-preview" target="_blank">
+        📄 Open Resume HTML
+      </a>
+      <a href="Cover_Letter_iOS_Mohd_Shoeb.html" class="btn btn-preview" target="_blank">
+        ✉️ Open Cover Letter HTML
+      </a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Built with ❤️ | <a href="https://github.com/mohd14shoeb" target="_blank">View on GitHub</a></p>
+  </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal-overlay" id="previewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">PDF Preview</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <iframe id="previewFrame"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  // File paths
+  const FILES = {
+    resume: 'Resume_iOS_Developer_Mohd_Shoeb_Formatted.html',
+    cover: 'Cover_Letter_iOS_Mohd_Shoeb.html'
+  };
+
+  // Show status message
+  function setStatus(type, message, className = '') {
+    const el = document.getElementById('status-' + type);
+    if (el) {
+      el.textContent = message;
+      el.className = 'status ' + className;
+    }
+  }
+
+  // Fetch HTML file content
+  async function fetchHTMLContent(filePath) {
+    const response = await fetch(filePath);
+    if (!response.ok) {
+      throw new Error('Failed to fetch: ' + filePath);
+    }
+    return await response.text();
+  }
+
+  // Extract body content from HTML
+  function extractBodyContent(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const body = doc.body;
+    // Clone and get innerHTML
+    const clone = body.cloneNode(true);
+    return clone.innerHTML;
+  }
+
+  // Generate PDF from HTML content
+  async function generatePDFFromHTML(htmlContent, filename) {
+    return new Promise((resolve, reject) => {
+      const tempDiv = document.createElement('div');
+      tempDiv.style.position = 'fixed';
+      tempDiv.style.left = '-9999px';
+      tempDiv.style.top = '0';
+      tempDiv.style.width = '820px';
+      tempDiv.innerHTML = htmlContent;
+      document.body.appendChild(tempDiv);
+
+      const opt = {
+        margin: 0.4,
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().from(tempDiv).set(opt).outputPdf('blob').then(blob => {
+        document.body.removeChild(tempDiv);
+        resolve(blob);
+      }).catch(reject);
+    });
+  }
+
+  // Generate PDF from file
+  async function generatePDF(type, filename) {
+    setStatus(type, '⏳ Generating PDF...', 'loading');
+    try {
+      let htmlContent;
+
+      if (type === 'resume') {
+        const html = await fetchHTMLContent(FILES.resume);
+        htmlContent = extractBodyContent(html);
+      } else if (type === 'cover') {
+        const html = await fetchHTMLContent(FILES.cover);
+        htmlContent = extractBodyContent(html);
+      } else if (type === 'both') {
+        const resumeHTML = await fetchHTMLContent(FILES.resume);
+        const coverHTML = await fetchHTMLContent(FILES.cover);
+        const resumeBody = extractBodyContent(resumeHTML);
+        const coverBody = extractBodyContent(coverHTML);
+        htmlContent = `<div style="font-family: 'Calibri', Arial, sans-serif; font-size: 11pt;">
+          <div style="page-break-after: always;">${resumeBody}</div>
+          <div>${coverBody}</div>
+        </div>`;
+      }
+
+      const blob = await generatePDFFromHTML(htmlContent, filename);
+      setStatus(type, '✅ PDF generated successfully!', 'success');
+      return blob;
+    } catch (error) {
+      console.error(error);
+      setStatus(type, '❌ Error: ' + error.message, 'error');
+      return null;
+    }
+  }
+
+  // Preview PDF
+  async function previewPDF(type) {
+    const filename = type === 'resume' ? 'Resume.pdf' :
+                     type === 'cover' ? 'Cover_Letter.pdf' : 'Resume_and_Cover_Letter.pdf';
+
+    setStatus(type, '⏳ Generating preview...', 'loading');
+
+    try {
+      let htmlContent;
+
+      if (type === 'resume') {
+        const html = await fetchHTMLContent(FILES.resume);
+        htmlContent = extractBodyContent(html);
+      } else if (type === 'cover') {
+        const html = await fetchHTMLContent(FILES.cover);
+        htmlContent = extractBodyContent(html);
+      } else if (type === 'both') {
+        const resumeHTML = await fetchHTMLContent(FILES.resume);
+        const coverHTML = await fetchHTMLContent(FILES.cover);
+        const resumeBody = extractBodyContent(resumeHTML);
+        const coverBody = extractBodyContent(coverHTML);
+        htmlContent = `<div style="font-family: 'Calibri', Arial, sans-serif; font-size: 11pt;">
+          <div style="page-break-after: always;">${resumeBody}</div>
+          <div>${coverBody}</div>
+        </div>`;
+      }
+
+      const blob = await generatePDFFromHTML(htmlContent, filename);
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        document.getElementById('previewFrame').src = url;
+        document.getElementById('modalTitle').textContent = filename + ' - Preview';
+        document.getElementById('previewModal').classList.add('active');
+        setStatus(type, '✅ Preview loaded!', 'success');
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus(type, '❌ Error: ' + error.message, 'error');
+    }
+  }
+
+  // Download PDF
+  async function downloadPDF(type) {
+    const filename = type === 'resume' ? 'Resume.pdf' :
+                     type === 'cover' ? 'Cover_Letter.pdf' : 'Resume_and_Cover_Letter.pdf';
+
+    setStatus(type, '⏳ Generating download...', 'loading');
+
+    try {
+      const blob = await generatePDF(type, filename);
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setStatus(type, '✅ Download started: ' + filename, 'success');
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus(type, '❌ Error: ' + error.message, 'error');
+    }
+  }
+
+  // Generate and Preview
+  async function generateAndPreview(type) {
+    const filename = type === 'resume' ? 'Resume.pdf' :
+                     type === 'cover' ? 'Cover_Letter.pdf' : 'Resume_and_Cover_Letter.pdf';
+
+    setStatus(type, '⏳ Generating...', 'loading');
+
+    try {
+      let htmlContent;
+
+      if (type === 'resume') {
+        const html = await fetchHTMLContent(FILES.resume);
+        htmlContent = extractBodyContent(html);
+      } else if (type === 'cover') {
+        const html = await fetchHTMLContent(FILES.cover);
+        htmlContent = extractBodyContent(html);
+      } else if (type === 'both') {
+        const resumeHTML = await fetchHTMLContent(FILES.resume);
+        const coverHTML = await fetchHTMLContent(FILES.cover);
+        const resumeBody = extractBodyContent(resumeHTML);
+        const coverBody = extractBodyContent(coverHTML);
+        htmlContent = `<div style="font-family: 'Calibri', Arial, sans-serif; font-size: 11pt;">
+          <div style="page-break-after: always;">${resumeBody}</div>
+          <div>${coverBody}</div>
+        </div>`;
+      }
+
+      const blob = await generatePDFFromHTML(htmlContent, filename);
+      if (blob) {
+        // Show preview
+        const url = URL.createObjectURL(blob);
+        document.getElementById('previewFrame').src = url;
+        document.getElementById('modalTitle').textContent = filename + ' - Preview';
+        document.getElementById('previewModal').classList.add('active');
+
+        // Also trigger download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        setStatus(type, '✅ Generated & downloaded: ' + filename, 'success');
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus(type, '❌ Error: ' + error.message, 'error');
+    }
+  }
+
+  // Close modal
+  function closeModal() {
+    document.getElementById('previewModal').classList.remove('active');
+    document.getElementById('previewFrame').src = '';
+  }
+
+  // Close modal on overlay click
+  document.getElementById('previewModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeModal();
+    }
+  });
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+  });
+</script>
+
+</body>
+</html>

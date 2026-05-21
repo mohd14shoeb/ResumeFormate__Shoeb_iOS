@@ -243,6 +243,22 @@
       text-decoration: none;
     }
 
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     /* Responsive */
     @media (max-width: 640px) {
       .header h1 { font-size: 28px; }
@@ -271,7 +287,7 @@
     <p>Professional resume highlighting 12+ years of iOS development experience with Swift, SwiftUI, MVVM, and enterprise application delivery.</p>
     <div class="btn-group">
       <button class="btn btn-preview" onclick="previewPDF('resume')">
-        👁️ Preview PDF (New Tab)
+        👁️ Preview PDF
       </button>
       <button class="btn btn-download" onclick="downloadPDF('resume')">
         ⬇️ Download PDF
@@ -289,7 +305,7 @@
     <p>Professional cover letter for Senior iOS Developer / Team Lead position applications.</p>
     <div class="btn-group">
       <button class="btn btn-preview" onclick="previewPDF('cover')">
-        👁️ Preview PDF (New Tab)
+        👁️ Preview PDF
       </button>
       <button class="btn btn-download" onclick="downloadPDF('cover')">
         ⬇️ Download PDF
@@ -307,7 +323,7 @@
     <p>Generate a combined PDF with both resume and cover letter for unified submission.</p>
     <div class="btn-group">
       <button class="btn btn-preview" onclick="previewPDF('both')">
-        👁️ Preview Combined PDF (New Tab)
+        👁️ Preview Combined PDF
       </button>
       <button class="btn btn-download" onclick="downloadPDF('both')">
         ⬇️ Download Combined PDF
@@ -381,6 +397,7 @@
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const body = doc.body;
+    // Clone and get innerHTML
     const clone = body.cloneNode(true);
     return clone.innerHTML;
   }
@@ -444,7 +461,7 @@
     }
   }
 
-  // Preview PDF - opens in new tab
+  // Preview PDF
   async function previewPDF(type) {
     const filename = type === 'resume' ? 'Resume.pdf' :
                      type === 'cover' ? 'Cover_Letter.pdf' : 'Resume_and_Cover_Letter.pdf';
@@ -474,9 +491,10 @@
       const blob = await generatePDFFromHTML(htmlContent, filename);
       if (blob) {
         const url = URL.createObjectURL(blob);
-        // Open in new tab for proper PDF rendering
-        window.open(url, '_blank');
-        setStatus(type, '✅ Preview opened in new tab!', 'success');
+        document.getElementById('previewFrame').src = url;
+        document.getElementById('modalTitle').textContent = filename + ' - Preview';
+        document.getElementById('previewModal').classList.add('active');
+        setStatus(type, '✅ Preview loaded!', 'success');
       }
     } catch (error) {
       console.error(error);
@@ -539,9 +557,11 @@
 
       const blob = await generatePDFFromHTML(htmlContent, filename);
       if (blob) {
-        // Open preview in new tab
+        // Show preview
         const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
+        document.getElementById('previewFrame').src = url;
+        document.getElementById('modalTitle').textContent = filename + ' - Preview';
+        document.getElementById('previewModal').classList.add('active');
 
         // Also trigger download
         const a = document.createElement('a');

@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mohd Shoeb - Resume & Cover Letter Generator</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <title>Mohd Shoeb - Resume & Cover Letter</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -30,7 +29,7 @@
     }
     .card h2 { font-size: 22px; color: #f1f5f9; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
     .card h2 .icon { font-size: 28px; }
-    .card p { color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
+    .card p { color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 16px; }
     .btn-group { display: flex; gap: 12px; flex-wrap: wrap; }
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
@@ -41,12 +40,25 @@
     .btn-preview:hover { background: rgba(56,189,248,0.25); border-color: rgba(56,189,248,0.5); }
     .btn-download { background: linear-gradient(135deg,#0ea5e9,#2563eb); color: #fff; box-shadow: 0 4px 15px rgba(14,165,233,0.3); }
     .btn-download:hover { box-shadow: 0 6px 20px rgba(14,165,233,0.5); transform: translateY(-1px); }
+    .btn-print { background: linear-gradient(135deg,#10b981,#059669); color: #fff; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+    .btn-print:hover { box-shadow: 0 6px 20px rgba(16,185,129,0.5); transform: translateY(-1px); }
     .status { margin-top: 12px; font-size: 13px; color: #64748b; min-height: 20px; }
     .status.success { color: #34d399; }
     .status.error { color: #f87171; }
     .status.loading { color: #fbbf24; }
     .footer { text-align: center; margin-top: 40px; color: #475569; font-size: 13px; }
     .footer a { color: #38bdf8; text-decoration: none; }
+    .info-box {
+      background: rgba(56,189,248,0.1);
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .info-box strong { color: #38bdf8; }
     @media (max-width: 640px) {
       .header h1 { font-size: 28px; }
       .card { padding: 20px; }
@@ -69,35 +81,53 @@
     </div>
   </div>
 
+  <div class="info-box">
+    <strong>How to generate PDF:</strong> Click "Preview" to open the document, then press <strong>Ctrl+P</strong> (Windows) or <strong>Cmd+P</strong> (Mac) and select "Save as PDF". This ensures perfect formatting with all styles.
+  </div>
+
+  <!-- Resume -->
   <div class="card">
     <h2><span class="icon">📄</span> Resume</h2>
-    <p>12+ years of iOS development experience - Swift, SwiftUI, MVVM</p>
+    <p>12+ years of iOS development - Swift, SwiftUI, MVVM, Enterprise Apps</p>
     <div class="btn-group">
-      <button class="btn btn-preview" onclick="window.open('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html','_blank')">👁️ Preview HTML</button>
-      <button class="btn btn-download" onclick="downloadPDF('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html','Resume.pdf')">⬇️ Download PDF</button>
+      <button class="btn btn-preview" onclick="openForPrint('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html','Resume')">
+        👁️ Preview & Print PDF
+      </button>
+      <button class="btn btn-download" onclick="downloadHTML('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html')">
+        ⬇️ Save HTML
+      </button>
     </div>
     <div class="status" id="status-resume"></div>
   </div>
 
+  <!-- Cover Letter -->
   <div class="card">
     <h2><span class="icon">✉️</span> Cover Letter</h2>
     <p>Professional cover letter for job applications</p>
     <div class="btn-group">
-      <button class="btn btn-preview" onclick="window.open('Cover_Letter_iOS_Mohd_Shoeb.html','_blank')">👁️ Preview HTML</button>
-      <button class="btn btn-download" onclick="downloadPDF('Cover_Letter_iOS_Mohd_Shoeb.html','Cover_Letter.pdf')">⬇️ Download PDF</button>
+      <button class="btn btn-preview" onclick="openForPrint('Cover_Letter_iOS_Mohd_Shoeb.html','Cover Letter')">
+        👁️ Preview & Print PDF
+      </button>
+      <button class="btn btn-download" onclick="downloadHTML('Cover_Letter_iOS_Mohd_Shoeb.html')">
+        ⬇️ Save HTML
+      </button>
     </div>
     <div class="status" id="status-cover"></div>
   </div>
 
+  <!-- Combined -->
   <div class="card">
     <h2><span class="icon">📑</span> Combined</h2>
-    <p>Resume + Cover Letter as single PDF</p>
+    <p>Open both documents and print them together</p>
     <div class="btn-group">
-      <button class="btn btn-download" onclick="downloadCombined()">⬇️ Download Combined PDF</button>
+      <button class="btn btn-print" onclick="openCombined()">
+        🖨️ Open Both & Print
+      </button>
     </div>
     <div class="status" id="status-both"></div>
   </div>
 
+  <!-- Source Files -->
   <div class="card">
     <h2><span class="icon">🌐</span> Source Files</h2>
     <div class="btn-group">
@@ -111,89 +141,38 @@
   </div>
 </div>
 
-<!-- Hidden PDF container -->
-<div id="pdfGenContainer" style="position:fixed;left:-9999px;top:0;width:820px;"></div>
-
 <script>
   function setStatus(id, msg, cls) {
     const el = document.getElementById(id);
     if (el) { el.textContent = msg; if (cls) el.className = 'status ' + cls; }
   }
 
-  async function fetchHTML(path) {
-    const r = await fetch(path);
-    if (!r.ok) throw new Error('Cannot fetch: ' + path);
-    return await r.text();
+  // Open file in new tab and focus it for printing
+  function openForPrint(filePath, name) {
+    setStatus('status-' + (name === 'Resume' ? 'resume' : 'cover'), '✅ Opened ' + name + ' - Use Ctrl+P / Cmd+P to save as PDF', 'success');
+    window.open(filePath, '_blank');
   }
 
-  function makePDF(html, filename) {
-    return new Promise((resolve, reject) => {
-      const c = document.getElementById('pdfGenContainer');
-      // Remove external font links to prevent loading issues
-      let cleanHTML = html.replace(/<link[^>]*fonts\.googleapis\.com[^>]*>/gi, '');
-      c.innerHTML = cleanHTML;
-
-      const opt = {
-        margin: 0.4,
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-
-      html2pdf().from(c).set(opt).outputPdf('blob').then(b => {
-        c.innerHTML = '';
-        resolve(b);
-      }).catch(reject);
+  // Download HTML file
+  function downloadHTML(filePath) {
+    fetch(filePath).then(r => r.blob()).then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filePath.replace('.html','') + '.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setStatus('status-resume', '✅ HTML file downloaded', 'success');
     });
   }
 
-  async function downloadPDF(filePath, filename) {
-    const id = filename === 'Resume.pdf' ? 'status-resume' : 'status-cover';
-    setStatus(id, '⏳ Generating ' + filename + '...', 'loading');
-    try {
-      const html = await fetchHTML(filePath);
-      const blob = await makePDF(html, filename);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setStatus(id, '✅ ' + filename + ' downloaded!', 'success');
-    } catch (e) {
-      console.error(e);
-      setStatus(id, '❌ Error: ' + e.message, 'error');
-    }
-  }
-
-  async function downloadCombined() {
-    setStatus('status-both', '⏳ Generating Combined PDF...', 'loading');
-    try {
-      const resume = await fetchHTML('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html');
-      const cover = await fetchHTML('Cover_Letter_iOS_Mohd_Shoeb.html');
-      // Strip font links
-      resume = resume.replace(/<link[^>]*fonts\.googleapis\.com[^>]*>/gi, '');
-      cover = cover.replace(/<link[^>]*fonts\.googleapis\.com[^>]*>/gi, '');
-      const combined = '<div style="font-family:Calibri,Arial,sans-serif;font-size:11pt;width:820px;">' +
-        '<div style="page-break-after:always;">' + resume + '</div>' +
-        '<div>' + cover + '</div></div>';
-      const blob = await makePDF(combined, 'Resume_and_Cover_Letter.pdf');
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'Resume_and_Cover_Letter.pdf';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setStatus('status-both', '✅ Combined PDF downloaded!', 'success');
-    } catch (e) {
-      console.error(e);
-      setStatus('status-both', '❌ Error: ' + e.message, 'error');
-    }
+  // Open both files
+  function openCombined() {
+    window.open('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', '_blank');
+    setTimeout(() => window.open('Cover_Letter_iOS_Mohd_Shoeb.html', '_blank'), 500);
+    setStatus('status-both', '✅ Both documents opened - Print each with Ctrl+P / Cmd+P', 'success');
   }
 </script>
 

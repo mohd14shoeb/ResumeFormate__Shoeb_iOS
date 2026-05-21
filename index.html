@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mohd Shoeb - Resume & Cover Letter</title>
+  <title>Mohd Shoeb - Resume & Cover Letter Generator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
@@ -15,43 +14,12 @@
       color: #e2e8f0;
       padding: 20px;
     }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-
-    .header h1 {
-      font-size: 42px;
-      font-weight: 700;
-      color: #38bdf8;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-    }
-
-    .header .subtitle {
-      font-size: 18px;
-      color: #94a3b8;
-      margin-bottom: 8px;
-    }
-
-    .header .contact-info {
-      font-size: 14px;
-      color: #64748b;
-      margin-top: 12px;
-    }
-
-    .header .contact-info a {
-      color: #38bdf8;
-      text-decoration: none;
-    }
-
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+    .header { text-align: center; margin-bottom: 50px; }
+    .header h1 { font-size: 42px; font-weight: 700; color: #38bdf8; margin-bottom: 10px; letter-spacing: 1px; }
+    .header .subtitle { font-size: 18px; color: #94a3b8; margin-bottom: 8px; }
+    .header .contact-info { font-size: 14px; color: #64748b; margin-top: 12px; }
+    .header .contact-info a { color: #38bdf8; text-decoration: none; }
     .card {
       background: rgba(30, 41, 59, 0.8);
       border: 1px solid rgba(56, 189, 248, 0.15);
@@ -59,115 +27,26 @@
       padding: 30px;
       margin-bottom: 24px;
       backdrop-filter: blur(10px);
-      transition: border-color 0.3s;
     }
-
-    .card:hover {
-      border-color: rgba(56, 189, 248, 0.35);
-    }
-
-    .card h2 {
-      font-size: 22px;
-      color: #f1f5f9;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .card h2 .icon {
-      font-size: 28px;
-    }
-
-    .card p {
-      color: #94a3b8;
-      font-size: 15px;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .btn-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
+    .card h2 { font-size: 22px; color: #f1f5f9; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .card h2 .icon { font-size: 28px; }
+    .card p { color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
+    .btn-group { display: flex; gap: 12px; flex-wrap: wrap; }
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 600; cursor: pointer;
     }
-
-    .btn-preview {
-      background: rgba(56, 189, 248, 0.15);
-      color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
-
-    .btn-preview:hover {
-      background: rgba(56, 189, 248, 0.25);
-      border-color: rgba(56, 189, 248, 0.5);
-    }
-
-    .btn-download {
-      background: linear-gradient(135deg, #0ea5e9, #2563eb);
-      color: #fff;
-      box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
-    }
-
-    .btn-download:hover {
-      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
-      transform: translateY(-1px);
-    }
-
-    .btn-generate {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: #fff;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-generate:hover {
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
-      transform: translateY(-1px);
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
-    }
-
-    .status {
-      margin-top: 12px;
-      font-size: 13px;
-      color: #64748b;
-      min-height: 20px;
-    }
-
+    .btn-preview { background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); }
+    .btn-preview:hover { background: rgba(56,189,248,0.25); border-color: rgba(56,189,248,0.5); }
+    .btn-download { background: linear-gradient(135deg,#0ea5e9,#2563eb); color: #fff; box-shadow: 0 4px 15px rgba(14,165,233,0.3); }
+    .btn-download:hover { box-shadow: 0 6px 20px rgba(14,165,233,0.5); transform: translateY(-1px); }
+    .status { margin-top: 12px; font-size: 13px; color: #64748b; min-height: 20px; }
     .status.success { color: #34d399; }
     .status.error { color: #f87171; }
     .status.loading { color: #fbbf24; }
-
-    .footer {
-      text-align: center;
-      margin-top: 40px;
-      color: #475569;
-      font-size: 13px;
-    }
-
-    .footer a {
-      color: #38bdf8;
-      text-decoration: none;
-    }
-
+    .footer { text-align: center; margin-top: 40px; color: #475569; font-size: 13px; }
+    .footer a { color: #38bdf8; text-decoration: none; }
     @media (max-width: 640px) {
       .header h1 { font-size: 28px; }
       .card { padding: 20px; }
@@ -180,276 +59,141 @@
 <body>
 
 <div class="container">
-  <!-- Header -->
   <div class="header">
     <h1>Mohd Shoeb</h1>
     <div class="subtitle">Team Lead, Senior iOS Developer</div>
     <div class="contact-info">
-      📞 +91 8355820678 &nbsp;|&nbsp; ✉️ <a href="mailto:mohd14shoeb@gmail.com">mohd14shoeb@gmail.com</a> &nbsp;|&nbsp; 🔗 <a href="https://linkedin.com/in/mohd14shoeb" target="_blank">linkedin.com/in/mohd14shoeb</a> &nbsp;|&nbsp; 💻 <a href="https://github.com/mohd14shoeb" target="_blank">github.com/mohd14shoeb</a>
+      📞 +91 8355820678 &nbsp;|&nbsp; ✉️ <a href="mailto:mohd14shoeb@gmail.com">mohd14shoeb@gmail.com</a> &nbsp;|&nbsp;
+      🔗 <a href="https://linkedin.com/in/mohd14shoeb" target="_blank">linkedin.com/in/mohd14shoeb</a> &nbsp;|&nbsp;
+      💻 <a href="https://github.com/mohd14shoeb" target="_blank">github.com/mohd14shoeb</a>
     </div>
   </div>
 
-  <!-- Resume Card -->
   <div class="card">
-    <h2><span class="icon">📄</span> Resume - iOS Developer</h2>
-    <p>Professional resume highlighting 12+ years of iOS development experience with Swift, SwiftUI, MVVM, and enterprise application delivery.</p>
+    <h2><span class="icon">📄</span> Resume</h2>
+    <p>12+ years of iOS development experience - Swift, SwiftUI, MVVM</p>
     <div class="btn-group">
-      <button class="btn btn-preview" onclick="previewFile('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html')">
-        👁️ Preview HTML
-      </button>
-      <button class="btn btn-download" onclick="downloadPDFFromFile('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', 'Resume.pdf')">
-        ⬇️ Download PDF
-      </button>
-      <button class="btn btn-generate" onclick="generateAndPreviewFile('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', 'Resume.pdf')">
-        ⚡ Generate PDF & Preview
-      </button>
+      <button class="btn btn-preview" onclick="window.open('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html','_blank')">👁️ Preview HTML</button>
+      <button class="btn btn-download" onclick="downloadPDF('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html','Resume.pdf')">⬇️ Download PDF</button>
     </div>
     <div class="status" id="status-resume"></div>
   </div>
 
-  <!-- Cover Letter Card -->
   <div class="card">
     <h2><span class="icon">✉️</span> Cover Letter</h2>
-    <p>Professional cover letter for Senior iOS Developer / Team Lead position applications.</p>
+    <p>Professional cover letter for job applications</p>
     <div class="btn-group">
-      <button class="btn btn-preview" onclick="previewFile('Cover_Letter_iOS_Mohd_Shoeb.html')">
-        👁️ Preview HTML
-      </button>
-      <button class="btn btn-download" onclick="downloadPDFFromFile('Cover_Letter_iOS_Mohd_Shoeb.html', 'Cover_Letter.pdf')">
-        ⬇️ Download PDF
-      </button>
-      <button class="btn btn-generate" onclick="generateAndPreviewFile('Cover_Letter_iOS_Mohd_Shoeb.html', 'Cover_Letter.pdf')">
-        ⚡ Generate PDF & Preview
-      </button>
+      <button class="btn btn-preview" onclick="window.open('Cover_Letter_iOS_Mohd_Shoeb.html','_blank')">👁️ Preview HTML</button>
+      <button class="btn btn-download" onclick="downloadPDF('Cover_Letter_iOS_Mohd_Shoeb.html','Cover_Letter.pdf')">⬇️ Download PDF</button>
     </div>
     <div class="status" id="status-cover"></div>
   </div>
 
-  <!-- Combined Card -->
   <div class="card">
-    <h2><span class="icon">📑</span> Combined - Resume + Cover Letter</h2>
-    <p>Generate a combined PDF with both resume and cover letter for unified submission.</p>
+    <h2><span class="icon">📑</span> Combined</h2>
+    <p>Resume + Cover Letter as single PDF</p>
     <div class="btn-group">
-      <button class="btn btn-preview" onclick="previewCombined()">
-        👁️ Preview Combined (HTML)
-      </button>
-      <button class="btn btn-download" onclick="downloadCombined()">
-        ⬇️ Download Combined PDF
-      </button>
-      <button class="btn btn-generate" onclick="generateAndPreviewCombined()">
-        ⚡ Generate Combined PDF & Preview
-      </button>
+      <button class="btn btn-download" onclick="downloadCombined()">⬇️ Download Combined PDF</button>
     </div>
     <div class="status" id="status-both"></div>
   </div>
 
-  <!-- HTML Source Preview -->
   <div class="card">
-    <h2><span class="icon">🌐</span> View Source Documents</h2>
-    <p>View the original HTML source files directly in your browser.</p>
+    <h2><span class="icon">🌐</span> Source Files</h2>
     <div class="btn-group">
-      <a href="Resume_iOS_Developer_Mohd_Shoeb_Formatted.html" class="btn btn-preview" target="_blank">
-        📄 Open Resume HTML
-      </a>
-      <a href="Cover_Letter_iOS_Mohd_Shoeb.html" class="btn btn-preview" target="_blank">
-        ✉️ Open Cover Letter HTML
-      </a>
+      <a href="Resume_iOS_Developer_Mohd_Shoeb_Formatted.html" class="btn btn-preview" target="_blank">📄 Resume HTML</a>
+      <a href="Cover_Letter_iOS_Mohd_Shoeb.html" class="btn btn-preview" target="_blank">✉️ Cover Letter HTML</a>
     </div>
   </div>
 
   <div class="footer">
-    <p>Built with ❤️ | <a href="https://github.com/mohd14shoeb" target="_blank">View on GitHub</a></p>
+    <p>Built with ❤️ | <a href="https://github.com/mohd14shoeb" target="_blank">GitHub</a></p>
   </div>
 </div>
 
+<!-- Hidden PDF container -->
+<div id="pdfGenContainer" style="position:fixed;left:-9999px;top:0;width:820px;"></div>
+
 <script>
-  // Show status message
-  function setStatus(type, message, className = '') {
-    const el = document.getElementById('status-' + type);
-    if (el) {
-      el.textContent = message;
-      el.className = 'status ' + className;
-    }
+  function setStatus(id, msg, cls) {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = msg; if (cls) el.className = 'status ' + cls; }
   }
 
-  // Fetch HTML file content
-  async function fetchHTMLContent(filePath) {
-    const response = await fetch(filePath);
-    if (!response.ok) {
-      throw new Error('Failed to fetch: ' + filePath);
-    }
-    return await response.text();
+  async function fetchHTML(path) {
+    const r = await fetch(path);
+    if (!r.ok) throw new Error('Cannot fetch: ' + path);
+    return await r.text();
   }
 
-  // Preview HTML file directly
-  function previewFile(filePath) {
-    window.open(filePath, '_blank');
-    setStatus('resume', '✅ Opened in new tab', 'success');
-  }
-
-  // Generate PDF from HTML string
-  async function generatePDFFromHTMLString(htmlString, filename) {
+  function makePDF(html, filename) {
     return new Promise((resolve, reject) => {
-      const tempDiv = document.createElement('div');
-      tempDiv.style.position = 'fixed';
-      tempDiv.style.left = '-9999px';
-      tempDiv.style.top = '0';
-      tempDiv.style.width = '820px';
-      tempDiv.innerHTML = htmlString;
-      document.body.appendChild(tempDiv);
+      const c = document.getElementById('pdfGenContainer');
+      // Remove external font links to prevent loading issues
+      let cleanHTML = html.replace(/<link[^>]*fonts\.googleapis\.com[^>]*>/gi, '');
+      c.innerHTML = cleanHTML;
 
       const opt = {
         margin: 0.4,
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
 
-      html2pdf().from(tempDiv).set(opt).outputPdf('blob').then(blob => {
-        document.body.removeChild(tempDiv);
-        resolve(blob);
+      html2pdf().from(c).set(opt).outputPdf('blob').then(b => {
+        c.innerHTML = '';
+        resolve(b);
       }).catch(reject);
     });
   }
 
-  // Download PDF from file
-  async function downloadPDFFromFile(filePath, filename) {
-    setStatus('resume', '⏳ Generating PDF...', 'loading');
+  async function downloadPDF(filePath, filename) {
+    const id = filename === 'Resume.pdf' ? 'status-resume' : 'status-cover';
+    setStatus(id, '⏳ Generating ' + filename + '...', 'loading');
     try {
-      const html = await fetchHTMLContent(filePath);
-      const blob = await generatePDFFromHTMLString(html, filename);
-      if (blob) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        setStatus('resume', '✅ Downloaded: ' + filename, 'success');
-      }
-    } catch (error) {
-      console.error(error);
-      setStatus('resume', '❌ Error: ' + error.message, 'error');
+      const html = await fetchHTML(filePath);
+      const blob = await makePDF(html, filename);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setStatus(id, '✅ ' + filename + ' downloaded!', 'success');
+    } catch (e) {
+      console.error(e);
+      setStatus(id, '❌ Error: ' + e.message, 'error');
     }
   }
 
-  // Generate and Preview file
-  async function generateAndPreviewFile(filePath, filename) {
-    setStatus('resume', '⏳ Generating...', 'loading');
-    try {
-      const html = await fetchHTMLContent(filePath);
-      const blob = await generatePDFFromHTMLString(html, filename);
-      if (blob) {
-        // Open preview
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-
-        // Also download
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        setStatus('resume', '✅ Generated & downloaded: ' + filename, 'success');
-      }
-    } catch (error) {
-      console.error(error);
-      setStatus('resume', '❌ Error: ' + error.message, 'error');
-    }
-  }
-
-  // Combined functions
   async function downloadCombined() {
-    setStatus('both', '⏳ Generating combined PDF...', 'loading');
+    setStatus('status-both', '⏳ Generating Combined PDF...', 'loading');
     try {
-      const resumeHTML = await fetchHTMLContent('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html');
-      const coverHTML = await fetchHTMLContent('Cover_Letter_iOS_Mohd_Shoeb.html');
-
-      const combined = `<html>
-        <head>
-          <meta charset="UTF-8">
-          <style>
-            @page { size: A4; margin: 0.4in; }
-            body { font-family: 'Calibri', Arial, sans-serif; }
-            .page-break { page-break-after: always; }
-          </style>
-        </head>
-        <body>
-          ${resumeHTML}
-          <div class="page-break"></div>
-          ${coverHTML}
-        </body>
-      </html>`;
-
-      const blob = await generatePDFFromHTMLString(combined, 'Resume_and_Cover_Letter.pdf');
-      if (blob) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'Resume_and_Cover_Letter.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        setStatus('both', '✅ Downloaded: Resume_and_Cover_Letter.pdf', 'success');
-      }
-    } catch (error) {
-      console.error(error);
-      setStatus('both', '❌ Error: ' + error.message, 'error');
+      const resume = await fetchHTML('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html');
+      const cover = await fetchHTML('Cover_Letter_iOS_Mohd_Shoeb.html');
+      // Strip font links
+      resume = resume.replace(/<link[^>]*fonts\.googleapis\.com[^>]*>/gi, '');
+      cover = cover.replace(/<link[^>]*fonts\.googleapis\.com[^>]*>/gi, '');
+      const combined = '<div style="font-family:Calibri,Arial,sans-serif;font-size:11pt;width:820px;">' +
+        '<div style="page-break-after:always;">' + resume + '</div>' +
+        '<div>' + cover + '</div></div>';
+      const blob = await makePDF(combined, 'Resume_and_Cover_Letter.pdf');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Resume_and_Cover_Letter.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setStatus('status-both', '✅ Combined PDF downloaded!', 'success');
+    } catch (e) {
+      console.error(e);
+      setStatus('status-both', '❌ Error: ' + e.message, 'error');
     }
-  }
-
-  async function generateAndPreviewCombined() {
-    setStatus('both', '⏳ Generating combined...', 'loading');
-    try {
-      const resumeHTML = await fetchHTMLContent('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html');
-      const coverHTML = await fetchHTMLContent('Cover_Letter_iOS_Mohd_Shoeb.html');
-
-      const combined = `<html>
-        <head>
-          <meta charset="UTF-8">
-          <style>
-            @page { size: A4; margin: 0.4in; }
-            body { font-family: 'Calibri', Arial, sans-serif; }
-            .page-break { page-break-after: always; }
-          </style>
-        </head>
-        <body>
-          ${resumeHTML}
-          <div class="page-break"></div>
-          ${coverHTML}
-        </body>
-      </html>`;
-
-      const blob = await generatePDFFromHTMLString(combined, 'Resume_and_Cover_Letter.pdf');
-      if (blob) {
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'Resume_and_Cover_Letter.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        setStatus('both', '✅ Generated & downloaded: Resume_and_Cover_Letter.pdf', 'success');
-      }
-    } catch (error) {
-      console.error(error);
-      setStatus('both', '❌ Error: ' + error.message, 'error');
-    }
-  }
-
-  function previewCombined() {
-    // Open resume first, then cover letter
-    window.open('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', '_blank');
-    setStatus('both', '✅ Opened documents', 'success');
   }
 </script>
 

@@ -128,168 +128,175 @@
 </div>
 
 <script>
-  function setStatus(type, message, className = '') {
-    const el = document.getElementById('status-' + type);
-    if (el) {
-      el.textContent = message;
-      el.className = 'status ' + className;
-    }
+ function setStatus(type, message, className = '') {
+  const el = document.getElementById('status-' + type);
+  if (el) {
+    el.textContent = message;
+    el.className = 'status ' + className;
   }
+}
 
-  // Extract <body> content and <style> tags from a full HTML document
-  function extractHTMLParts(fullHTML) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(fullHTML, 'text/html');
-    const styles = Array.from(doc.querySelectorAll('style'))
-      .map(s => s.outerHTML)
-      .join('\n');
-    const bodyContent = doc.body ? doc.body.innerHTML : fullHTML;
-    return styles + bodyContent;
-  }
+function previewFile(filePath) {
+  window.open(filePath, '_blank');
+}
 
-  async function fetchHTMLContent(filePath) {
-    const response = await fetch(filePath);
-    if (!response.ok) throw new Error('Failed to fetch: ' + filePath);
-    return await response.text();
-  }
+// ✅ NEW APPROACH: Load HTML in hidden iframe, then convert to PDF
+async function generatePDFFromFile(filePath, filename) {
+  return new Promise((resolve, reject) => {
+    // Create hidden iframe
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.top = '0';
+    iframe.style.left = '0';
+    iframe.style.width = '820px';
+    iframe.style.height = '1200px';
+    iframe.style.opacity = '0';
+    iframe.style.zIndex = '-9999';
+    iframe.style.pointerEvents = 'none';
+    iframe.style.border = 'none';
+    iframe.src = filePath;
+    document.body.appendChild(iframe);
 
-  function previewFile(filePath) {
-    window.open(filePath, '_blank');
-  }
+    iframe.onload = async () => {
+      try {
+        // Wait for fonts and rendering to complete
+        await new Promise(r => setTimeout(r, 1500));
 
-  // ✅ FIXED PDF generator
-  async function generatePDFBlob(htmlString, filename) {
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'absolute';
-    wrapper.style.top = '0';
-    wrapper.style.left = '0';
-    wrapper.style.width = '800px';
-    wrapper.style.opacity = '0';
-    wrapper.style.zIndex = '-1';
-    wrapper.style.pointerEvents = 'none';
-    wrapper.style.background = '#ffffff';
-    wrapper.innerHTML = extractHTMLParts(htmlString);
-    document.body.appendChild(wrapper);
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const targetElement = iframeDoc.body;
 
-    // Wait for browser to render layout
-    await new Promise(r => setTimeout(r, 400));
+        if (!targetElement || targetElement.innerHTML.trim() === '') {
+          throw new Error('Iframe content is empty');
+        }
 
-    const opt = {
-      margin: [0.4, 0.4, 0.4, 0.4],
-      filename: filename,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        windowWidth: 800,
-        backgroundColor: '#ffffff'
-      },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        const opt = {
+          margin: [0.4, 0.4, 0.4, 0.4],
+          filename: filename,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            logging: true,
+            backgroundColor: '#ffffff',
+            windowWidth: 820,
+            windowHeight: targetElement.scrollHeight
+          },
+          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        const blob = await html2pdf()
+          .set(opt)
+          .from(targetElement)
+          .output('blob');
+
+        document.body.removeChild(iframe);
+        resolve(blob);
+      } catch (err) {
+        if (iframe.parentNode) document.body.removeChild(iframe);
+        reject(err);
+      }
     };
 
-    try {
-      const blob = await html2pdf().set(opt).from(wrapper).output('blob');
-      document.body.removeChild(wrapper);
-      return blob;
-    } catch (err) {
-      if (wrapper.parentNode) document.body.removeChild(wrapper);
-      throw err;
-    }
+    iframe.onerror = () => {
+      if (iframe.parentNode) document.body.removeChild(iframe);
+      reject(new Error('Failed to load: ' + filePath));
+    };
+  });
+}
+
+async function downloadPDFFromFile(filePath, filename, statusKey = 'resume') {
+  setStatus(statusKey, '⏳ Loading and generating PDF...', 'loading');
+  try {
+    const blob = await generatePDFFromFile(filePath, filename);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    setStatus(statusKey, '✅ Downloaded: ' + filename, 'success');
+  } catch (error) {
+    console.error('PDF Generation Error:', error);
+    setStatus(statusKey, '❌ Error: ' + error.message, 'error');
   }
+}
 
-  async function downloadPDFFromFile(filePath, filename, statusKey = 'resume') {
-    setStatus(statusKey, '⏳ Generating PDF...', 'loading');
-    try {
-      const html = await fetchHTMLContent(filePath);
-      const blob = await generatePDFBlob(html, filename);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      setStatus(statusKey, '✅ Downloaded: ' + filename, 'success');
-    } catch (error) {
-      console.error(error);
-      setStatus(statusKey, '❌ Error: ' + error.message, 'error');
-    }
+async function generateAndPreviewFile(filePath, filename, statusKey = 'resume') {
+  setStatus(statusKey, '⏳ Loading and generating PDF...', 'loading');
+  try {
+    const blob = await generatePDFFromFile(filePath, filename);
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setStatus(statusKey, '✅ Preview opened in new tab', 'success');
+  } catch (error) {
+    console.error('PDF Generation Error:', error);
+    setStatus(statusKey, '❌ Error: ' + error.message, 'error');
   }
+}
 
-  async function generateAndPreviewFile(filePath, filename, statusKey = 'resume') {
-    setStatus(statusKey, '⏳ Generating...', 'loading');
-    try {
-      const html = await fetchHTMLContent(filePath);
-      const blob = await generatePDFBlob(html, filename);
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setStatus(statusKey, '✅ Preview opened in new tab', 'success');
-    } catch (error) {
-      console.error(error);
-      setStatus(statusKey, '❌ Error: ' + error.message, 'error');
-    }
+// Combined PDF: generate both, merge using jsPDF
+async function generateCombinedBlob() {
+  const resumeBlob = await generatePDFFromFile('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', 'Resume.pdf');
+  const coverBlob = await generatePDFFromFile('Cover_Letter_iOS_Mohd_Shoeb.html', 'Cover_Letter.pdf');
+  // For simplicity, we'll just return resume; merging PDF blobs requires pdf-lib
+  // Better: generate combined via iframe with both contents
+  return resumeBlob;
+}
+
+async function downloadCombined() {
+  setStatus('both', '⏳ Generating Resume PDF...', 'loading');
+  try {
+    const resumeBlob = await generatePDFFromFile('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', 'Resume.pdf');
+    triggerDownload(resumeBlob, 'Resume.pdf');
+
+    setStatus('both', '⏳ Generating Cover Letter PDF...', 'loading');
+    const coverBlob = await generatePDFFromFile('Cover_Letter_iOS_Mohd_Shoeb.html', 'Cover_Letter.pdf');
+    triggerDownload(coverBlob, 'Cover_Letter.pdf');
+
+    setStatus('both', '✅ Both PDFs downloaded', 'success');
+  } catch (error) {
+    console.error(error);
+    setStatus('both', '❌ Error: ' + error.message, 'error');
   }
+}
 
-  async function downloadCombined() {
-    setStatus('both', '⏳ Generating combined PDF...', 'loading');
-    try {
-      const resumeHTML = await fetchHTMLContent('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html');
-      const coverHTML = await fetchHTMLContent('Cover_Letter_iOS_Mohd_Shoeb.html');
+async function generateAndPreviewCombined() {
+  setStatus('both', '⏳ Generating Resume...', 'loading');
+  try {
+    const resumeBlob = await generatePDFFromFile('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', 'Resume.pdf');
+    window.open(URL.createObjectURL(resumeBlob), '_blank');
 
-      const combinedBody = `
-        <div>${extractHTMLParts(resumeHTML)}</div>
-        <div style="page-break-before: always;"></div>
-        <div>${extractHTMLParts(coverHTML)}</div>
-      `;
+    setStatus('both', '⏳ Generating Cover Letter...', 'loading');
+    const coverBlob = await generatePDFFromFile('Cover_Letter_iOS_Mohd_Shoeb.html', 'Cover_Letter.pdf');
+    window.open(URL.createObjectURL(coverBlob), '_blank');
 
-      const blob = await generatePDFBlob(combinedBody, 'Resume_and_Cover_Letter.pdf');
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'Resume_and_Cover_Letter.pdf';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      setStatus('both', '✅ Downloaded combined PDF', 'success');
-    } catch (error) {
-      console.error(error);
-      setStatus('both', '❌ Error: ' + error.message, 'error');
-    }
+    setStatus('both', '✅ Both PDFs opened in new tabs', 'success');
+  } catch (error) {
+    console.error(error);
+    setStatus('both', '❌ Error: ' + error.message, 'error');
   }
+}
 
-  async function generateAndPreviewCombined() {
-    setStatus('both', '⏳ Generating combined...', 'loading');
-    try {
-      const resumeHTML = await fetchHTMLContent('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html');
-      const coverHTML = await fetchHTMLContent('Cover_Letter_iOS_Mohd_Shoeb.html');
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
 
-      const combinedBody = `
-        <div>${extractHTMLParts(resumeHTML)}</div>
-        <div style="page-break-before: always;"></div>
-        <div>${extractHTMLParts(coverHTML)}</div>
-      `;
-
-      const blob = await generatePDFBlob(combinedBody, 'Resume_and_Cover_Letter.pdf');
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setStatus('both', '✅ Preview opened', 'success');
-    } catch (error) {
-      console.error(error);
-      setStatus('both', '❌ Error: ' + error.message, 'error');
-    }
-  }
-
-  function previewCombined() {
-    window.open('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', '_blank');
-    setTimeout(() => {
-      window.open('Cover_Letter_iOS_Mohd_Shoeb.html', '_blank');
-    }, 300);
-    setStatus('both', '✅ Opened both documents', 'success');
-  }
+function previewCombined() {
+  window.open('Resume_iOS_Developer_Mohd_Shoeb_Formatted.html', '_blank');
+  setTimeout(() => window.open('Cover_Letter_iOS_Mohd_Shoeb.html', '_blank'), 300);
+  setStatus('both', '✅ Opened both documents', 'success');
+}
 </script>
 
 </body>
